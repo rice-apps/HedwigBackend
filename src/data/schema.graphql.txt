@@ -1,0 +1,274 @@
+type Query {
+  """"""
+  userOne(
+    """Filter by fields"""
+    filter: FilterFindOneUsersInput
+    skip: Int
+    sort: SortFindOneUsersInput
+  ): Users
+
+  """"""
+  locationOne(
+    """Filter by fields"""
+    filter: FilterFindOneLocationsInput
+    skip: Int
+    sort: SortFindOneLocationsInput
+  ): Locations
+
+  """"""
+  vendorOne(
+    """Filter by fields"""
+    filter: FilterFindOneVendorsInput
+    skip: Int
+    sort: SortFindOneVendorsInput
+  ): Vendors
+}
+
+type Users {
+  name: String
+  netid: String
+  phone: String
+  type: EnumUsersType
+  isAdmin: Boolean
+  _id: MongoID!
+}
+
+enum EnumUsersType {
+  Undergraduate
+  Graduate
+  Faculty
+  Staff
+}
+
+"""
+The `ID` scalar type represents a unique MongoDB identifier in collection. MongoDB by default use 12-byte ObjectId value (https://docs.mongodb.com/manual/reference/bson-types/#objectid). But MongoDB also may accepts string or integer as correct values for _id field.
+"""
+scalar MongoID
+
+""""""
+input FilterFindOneUsersInput {
+  name: String
+  netid: String
+  phone: String
+  type: EnumUsersType
+  isAdmin: Boolean
+  _id: MongoID
+  _ids: [MongoID]
+
+  """List of *indexed* fields that can be filtered via operators."""
+  _operators: OperatorsFilterFindOneUsersInput
+  OR: [FilterFindOneUsersInput!]
+  AND: [FilterFindOneUsersInput!]
+}
+
+"""For performance reason this type contains only *indexed* fields."""
+input OperatorsFilterFindOneUsersInput {
+  netid: NetidOperatorsFilterFindOneUsersInput
+  _id: _idOperatorsFilterFindOneUsersInput
+}
+
+input NetidOperatorsFilterFindOneUsersInput {
+  gt: String
+  gte: String
+  lt: String
+  lte: String
+  ne: String
+  in: [String]
+  nin: [String]
+}
+
+input _idOperatorsFilterFindOneUsersInput {
+  gt: MongoID
+  gte: MongoID
+  lt: MongoID
+  lte: MongoID
+  ne: MongoID
+  in: [MongoID]
+  nin: [MongoID]
+}
+
+enum SortFindOneUsersInput {
+  _ID_ASC
+  _ID_DESC
+  NETID_ASC
+  NETID_DESC
+}
+
+type Locations {
+  name: String
+  _id: MongoID!
+}
+
+""""""
+input FilterFindOneLocationsInput {
+  name: String
+  _id: MongoID
+  _ids: [MongoID]
+
+  """List of *indexed* fields that can be filtered via operators."""
+  _operators: OperatorsFilterFindOneLocationsInput
+  OR: [FilterFindOneLocationsInput!]
+  AND: [FilterFindOneLocationsInput!]
+}
+
+"""For performance reason this type contains only *indexed* fields."""
+input OperatorsFilterFindOneLocationsInput {
+  _id: _idOperatorsFilterFindOneLocationsInput
+}
+
+input _idOperatorsFilterFindOneLocationsInput {
+  gt: MongoID
+  gte: MongoID
+  lt: MongoID
+  lte: MongoID
+  ne: MongoID
+  in: [MongoID]
+  nin: [MongoID]
+}
+
+enum SortFindOneLocationsInput {
+  _ID_ASC
+  _ID_DESC
+}
+
+type Vendors {
+  name: String
+  phone: String
+  type: EnumVendorsType
+  team: [MongoID]
+  hours: [VendorsHours]
+  locations: [MongoID]
+  _id: MongoID!
+}
+
+enum EnumVendorsType {
+  SRB
+  Retail
+  Servery
+}
+
+type VendorsHours {
+  day: EnumVendorsHoursDay
+  start: Float
+  end: Float
+  _id: MongoID
+}
+
+enum EnumVendorsHoursDay {
+  M
+  T
+  W
+  R
+  F
+  S
+  U
+}
+
+""""""
+input FilterFindOneVendorsInput {
+  name: String
+  phone: String
+  type: EnumVendorsType
+  team: [MongoID]
+  hours: [VendorsHoursInput]
+  locations: [MongoID]
+  _id: MongoID
+  _ids: [MongoID]
+
+  """List of *indexed* fields that can be filtered via operators."""
+  _operators: OperatorsFilterFindOneVendorsInput
+  OR: [FilterFindOneVendorsInput!]
+  AND: [FilterFindOneVendorsInput!]
+}
+
+input VendorsHoursInput {
+  day: EnumVendorsHoursDay
+  start: Float
+  end: Float
+  _id: MongoID
+}
+
+"""For performance reason this type contains only *indexed* fields."""
+input OperatorsFilterFindOneVendorsInput {
+  _id: _idOperatorsFilterFindOneVendorsInput
+}
+
+input _idOperatorsFilterFindOneVendorsInput {
+  gt: MongoID
+  gte: MongoID
+  lt: MongoID
+  lte: MongoID
+  ne: MongoID
+  in: [MongoID]
+  nin: [MongoID]
+}
+
+enum SortFindOneVendorsInput {
+  _ID_ASC
+  _ID_DESC
+}
+
+type Mutation {
+  """
+  Create one document with mongoose defaults, setters, hooks and validation
+  """
+  userCreateOne(record: CreateOneUsersInput!): CreateOneUsersPayload
+
+  """
+  Create one document with mongoose defaults, setters, hooks and validation
+  """
+  locationCreateOne(record: CreateOneLocationsInput!): CreateOneLocationsPayload
+
+  """
+  Create one document with mongoose defaults, setters, hooks and validation
+  """
+  vendorCreateOne(record: CreateOneVendorsInput!): CreateOneVendorsPayload
+}
+
+type CreateOneUsersPayload {
+  """Created document ID"""
+  recordId: MongoID
+
+  """Created document"""
+  record: Users
+}
+
+""""""
+input CreateOneUsersInput {
+  name: String
+  netid: String
+  phone: String
+  type: EnumUsersType
+  isAdmin: Boolean
+}
+
+type CreateOneLocationsPayload {
+  """Created document ID"""
+  recordId: MongoID
+
+  """Created document"""
+  record: Locations
+}
+
+""""""
+input CreateOneLocationsInput {
+  name: String
+}
+
+type CreateOneVendorsPayload {
+  """Created document ID"""
+  recordId: MongoID
+
+  """Created document"""
+  record: Vendors
+}
+
+""""""
+input CreateOneVendorsInput {
+  name: String
+  phone: String
+  type: EnumVendorsType
+  team: [MongoID]
+  hours: [VendorsHoursInput]
+  locations: [MongoID]
+}
