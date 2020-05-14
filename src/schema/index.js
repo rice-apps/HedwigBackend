@@ -6,7 +6,7 @@ const schemaComposer = new SchemaComposer();
 
 import { UserQuery, UserMutation } from './UserSchema';
 import { LocationQuery, LocationMutation } from './LocationSchema';
-import { VendorQuery, VendorMutation } from './VendorSchema';
+import { VendorQuery, VendorMutation, VendorSubscription } from './VendorSchema';
 import { ProductQuery, ProductMutation } from './ProductSchema';
 import { OrderQuery, OrderMutation } from './OrderSchema';
 
@@ -25,5 +25,9 @@ schemaComposer.Mutation.addFields({
     ...ProductMutation,
     ...OrderMutation
 });
+
+schemaComposer.Subscription.addFields({
+    ...VendorSubscription
+})
 
 export default schemaComposer.buildSchema();
