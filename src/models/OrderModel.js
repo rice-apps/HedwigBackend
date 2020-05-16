@@ -11,6 +11,7 @@ require('../db');
 
 var OrderItemSchema = new Schema({
     product: { type: Schema.Types.ObjectId, ref: Product },
+    addons: [{ type: Schema.Types.ObjectId, ref: Product }],
     comments: String // special requests, etc
 });
 
@@ -19,7 +20,7 @@ var OrderSchema = new Schema({
     vendor: { type: Schema.Types.ObjectId, ref: Vendor },
     items: [OrderItemSchema],
     discount: { type: Number, min: 1, max: 100 }, // Percentage
-    fulfillment: { type: String, enum: ['Placed', 'Preparing', 'Ready'] }
+    fulfillment: { type: String, enum: ['Placed', 'Preparing', 'Ready', 'Cancelled'], default: "Placed" }
 }, { timestamps: true });
 
 export const Order = mongoose.model("Orders", OrderSchema);
@@ -54,4 +55,12 @@ ItemsTC.addRelation("product", {
         _id: (source) => source.product
     },
     projection: { product: 1 }
-})
+});
+
+ItemsTC.addRelation("addons", {
+    "resolver": () => ProductTC.getResolver("findByIds"),
+    prepareArgs: {
+        _ids: (source) => source.addons
+    },
+    projection: { addons: 1 }
+});
