@@ -9,9 +9,10 @@ import { Product, ProductTC } from './ProductModel';
 
 require('../db');
 
-var OrderItemSchema = new Schema({
+export var OrderItemSchema = new Schema({
     product: { type: Schema.Types.ObjectId, ref: Product },
     addons: [{ type: Schema.Types.ObjectId, ref: Product }],
+    quantity: Number,
     comments: String // special requests, etc
 });
 
@@ -25,5 +26,3 @@ var OrderSchema = new Schema({
 
 export const Order = mongoose.model("Orders", OrderSchema);
 export const OrderTC = composeWithMongoose(Order);
-
-

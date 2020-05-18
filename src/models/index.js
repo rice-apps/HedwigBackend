@@ -1,6 +1,6 @@
 import { Location, LocationTC } from './LocationModel';
 import { Order, OrderTC } from './OrderModel';
-import { Product, ProductTC } from './ProductModel';
+import { Product, ProductTC, EntreeTC, AddonTC } from './ProductModel';
 import { Vendor, VendorTC } from './VendorModel';
 import { User, UserTC } from './UserModel';
 
@@ -13,6 +13,8 @@ export {
     LocationTC,
     OrderTC,
     ProductTC,
+    EntreeTC,
+    AddonTC,
     VendorTC,
     UserTC
 };

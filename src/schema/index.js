@@ -6,24 +6,24 @@ const schemaComposer = new SchemaComposer();
 
 import { UserQuery, UserMutation } from './UserSchema';
 import { LocationQuery, LocationMutation } from './LocationSchema';
-import { VendorQuery, VendorMutation, VendorSubscription } from './VendorSchema';
 import { ProductQuery, ProductMutation } from './ProductSchema';
 import { OrderQuery, OrderMutation } from './OrderSchema';
+import { VendorQuery, VendorMutation, VendorSubscription } from './VendorSchema';
 
 schemaComposer.Query.addFields({
     ...UserQuery,
     ...LocationQuery,
-    ...VendorQuery,
     ...ProductQuery,
-    ...OrderQuery
+    ...OrderQuery,
+    ...VendorQuery,
 });
 
 schemaComposer.Mutation.addFields({
     ...UserMutation,
     ...LocationMutation,
-    ...VendorMutation,
     ...ProductMutation,
-    ...OrderMutation
+    ...OrderMutation,
+    ...VendorMutation,
 });
 
 schemaComposer.Subscription.addFields({

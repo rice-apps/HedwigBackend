@@ -1,4 +1,4 @@
-import { Vendor, VendorTC, OrderTC, Order, ProductTC, Product, UserTC, LocationTC } from '../models';
+import { Vendor, VendorTC, OrderTC, Order, ProductTC, Product, UserTC, LocationTC, EntreeTC } from '../models';
 import { pubsub } from '../pubsub';
 import { withFilter } from 'apollo-server-express';
 
@@ -38,7 +38,7 @@ VendorTC.addRelation("locations", {
 
 // Creates relation to product schema
 VendorTC.addRelation("products", {
-    "resolver": () => ProductTC.getResolver("findManyByVendor"),
+    "resolver": () => EntreeTC.getResolver("findManyByVendor"),
     prepareArgs: {
         _id: (source) => source._id, // Uses the vendor _id
     },

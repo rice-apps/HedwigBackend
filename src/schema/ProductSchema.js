@@ -1,4 +1,4 @@
-import { Product, ProductTC, VendorTC } from '../models';
+import { Product, ProductTC, VendorTC, EntreeTC } from '../models';
 
 /**
  * Relations (necessary for any fields that link to other types in the schema)
@@ -19,7 +19,7 @@ ProductTC.addRelation("vendor", {
 /**
  * Used to find all products for a particular vendor
  */
-ProductTC.addResolver({
+EntreeTC.addResolver({
     name: "findManyByVendor",
     type: [ProductTC],
     args: { _id: "ID!" },
@@ -31,6 +31,7 @@ ProductTC.addResolver({
 const ProductQuery = {
     productOne: ProductTC.getResolver('findOne'),
     productMany: ProductTC.getResolver("findMany"),
+    entreeMany: EntreeTC.getResolver("findMany")
 };
 
 const ProductMutation = {
