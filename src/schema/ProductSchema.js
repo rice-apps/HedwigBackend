@@ -1,4 +1,16 @@
-import { Product, ProductTC } from '../models';
+import { Product, ProductTC, VendorTC } from '../models';
+
+/**
+ * Relations (necessary for any fields that link to other types in the schema)
+ * https://graphql-compose.github.io/docs/plugins/plugin-mongoose.html#how-to-build-nesting-relations
+ */
+ProductTC.addRelation("vendor", {
+    "resolver": () => VendorTC.getResolver('findById'),
+    prepareArgs: {
+        _id: (source) => source.vendor,
+    },
+    projection: { vendor: 1 }
+});
 
 /**
  * Custom Resolvers

@@ -18,12 +18,3 @@ var ProductSchema = new Schema({
 
 export const Product = mongoose.model("Products", ProductSchema);
 export const ProductTC = composeWithMongoose(Product);
-
-// Add relations: https://graphql-compose.github.io/docs/plugins/plugin-mongoose.html#how-to-build-nesting-relations
-ProductTC.addRelation("vendor", {
-    "resolver": () => VendorTC.getResolver('findById'),
-    prepareArgs: {
-        _id: (source) => source.vendor,
-    },
-    projection: { vendor: 1 }
-});
