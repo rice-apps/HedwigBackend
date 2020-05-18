@@ -25,20 +25,3 @@ var VendorSchema = new Schema({
 
 export const Vendor = mongoose.model("Vendors", VendorSchema);
 export const VendorTC = composeWithMongoose(Vendor);
-
-// Add relations: https://graphql-compose.github.io/docs/plugins/plugin-mongoose.html#how-to-build-nesting-relations
-VendorTC.addRelation("team", {
-    "resolver": () => UserTC.getResolver('findByIds'),
-    prepareArgs: {
-        _ids: (source) => source.team,
-    },
-    projection: { team: 1 }
-});
-
-VendorTC.addRelation("locations", {
-    "resolver": () => LocationTC.getResolver("findByIds"),
-    prepareArgs: {
-        _ids: (source) => source.locations,
-    },
-    projection: { locations: 1 }
-});

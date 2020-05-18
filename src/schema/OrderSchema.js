@@ -1,7 +1,63 @@
-import { Order, OrderTC } from '../models';
+import { Order, OrderTC, UserTC, VendorTC, ProductTC } from '../models';
 import { pubsub } from '../pubsub';
 
-console.log(OrderTC.getResolver("findMany").getArgTC("filter").getFieldTC("fulfillment"));
+/**
+ * Relations (necessary for any fields that link to other types in the schema)
+ * https://graphql-compose.github.io/docs/plugins/plugin-mongoose.html#how-to-build-nesting-relations
+ */
+OrderTC.addRelation("user", {
+    "resolver": () => UserTC.getResolver('findById'),
+    prepareArgs: {
+        _id: (source) => source.user,
+    },
+    projection: { user: 1 }
+});
+
+OrderTC.addRelation("vendor", {
+    "resolver": () => VendorTC.getResolver('findById'),
+    prepareArgs: {
+        _id: (source) => source.vendor,
+    },
+    projection: { vendor: 1 }
+});
+
+/**
+ * Add relation for a nested field: https://github.com/graphql-compose/graphql-compose/issues/2
+ * But the .getByPath(path) method doesn't exist anymore, so to get the TypeComposer of the nested field (in this case, "items")
+ * We need to use .getFieldTC(path)
+ */
+const ItemsTC = OrderTC.getFieldTC("items");
+ItemsTC.addRelation("product", {
+    "resolver": () => ProductTC.getResolver("findById"),
+    prepareArgs: {
+        _id: (source) => source.product
+    },
+    projection: { product: 1 }
+});
+
+ItemsTC.addRelation("addons", {
+    "resolver": () => ProductTC.getResolver("findByIds"),
+    prepareArgs: {
+        _ids: (source) => source.addons
+    },
+    projection: { addons: 1 }
+});
+
+/**
+ * Custom Resolvers
+ */
+
+/**
+ * Used to find all products for a particular vendor
+ */
+OrderTC.addResolver({
+    name: "findManyByVendor",
+    type: [OrderTC],
+    args: { _id: "ID!", fulfillmentStates: [OrderTC.getFieldTC("fulfillment")] },
+    resolve: async ({ source, args, context, info }) => {
+        return await Order.find({ vendor: args._id, fulfillment: { $in: args.fulfillmentStates } });
+    }
+});
 
 const OrderQuery = {
     orderOne: OrderTC.getResolver('findOne'),

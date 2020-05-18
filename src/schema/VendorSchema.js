@@ -1,8 +1,88 @@
-import { Vendor, VendorTC, OrderTC } from '../models';
+import { Vendor, VendorTC, OrderTC, Order, ProductTC, Product, UserTC, LocationTC } from '../models';
 import { pubsub } from '../pubsub';
 import { withFilter } from 'apollo-server-express';
 
-// Define custom resolvers here
+/**
+ * Custom GraphQL-only fields (essentially additional fields on top of our existing Mongoose-defined Schema)
+ */
+
+VendorTC.addFields({
+    products: [ProductTC],
+    activeOrders: [OrderTC],
+    completedOrders: [OrderTC],
+    cancelledOrders: [OrderTC]
+});
+
+/**
+ * Relations (necessary for any fields that link to other types in the schema)
+ * https://graphql-compose.github.io/docs/plugins/plugin-mongoose.html#how-to-build-nesting-relations
+ */
+
+// Creates relation to user schema
+VendorTC.addRelation("team", {
+    "resolver": () => UserTC.getResolver('findByIds'),
+    prepareArgs: {
+        _ids: (source) => source.team,
+    },
+    projection: { team: 1 }
+});
+
+// Creates relation to locations schema
+VendorTC.addRelation("locations", {
+    "resolver": () => LocationTC.getResolver("findByIds"),
+    prepareArgs: {
+        _ids: (source) => source.locations,
+    },
+    projection: { locations: 1 }
+});
+
+// Creates relation to product schema
+VendorTC.addRelation("products", {
+    "resolver": () => ProductTC.getResolver("findManyByVendor"),
+    prepareArgs: {
+        _id: (source) => source._id, // Uses the vendor _id
+    },
+    projection: { products: 1 }
+});
+
+// Creates relation to order schema; grabs all ACTIVE orders
+VendorTC.addRelation("activeOrders", {
+    "resolver": () => OrderTC.getResolver("findManyByVendor"),
+    prepareArgs: {
+        _id: (source) => source._id,
+        fulfillmentStates: (source) => ["Placed", "Preparing"]
+    },
+    projection: { activeOrders: 1 }
+});
+
+// Creates relation to order schema; grabs all COMPLETED orders
+VendorTC.addRelation("completedOrders", {
+    "resolver": () => OrderTC.getResolver("findManyByVendor"),
+    prepareArgs: {
+        _id: (source) => source._id,
+        fulfillmentStates: (source) => ["Ready"]
+    },
+    projection: { completedOrders: 1 }
+});
+
+// Creates relation to order schema; grabs all CANCELLED orders
+VendorTC.addRelation("cancelledOrders", {
+    "resolver": () => OrderTC.getResolver("findManyByVendor"),
+    prepareArgs: {
+        _id: (source) => source._id,
+        fulfillmentStates: (source) => ["Cancelled"]
+    },
+    projection: { cancelledOrders: 1 }
+});
+
+/**
+ * Custom Resolvers
+ */
+
+ /**
+  * Used to update a vendor's hours
+  * Can either add or remove an interval from their operating hours
+  */
 VendorTC.addResolver({
     name: "vendorUpdateHourSet",
     type: VendorTC,
@@ -26,7 +106,7 @@ VendorTC.addResolver({
 
 const VendorQuery = {
     vendorOne: VendorTC.getResolver('findOne'),
-    vendorMany: VendorTC.getResolver('findMany')
+    vendorMany: VendorTC.getResolver('findMany'),
 };
 
 const VendorMutation = {
